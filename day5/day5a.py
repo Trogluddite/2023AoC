@@ -85,19 +85,13 @@ alm = buildAlmanac()
 def unpack(map):
     return [map[k] for k in map.keys()]
 
-print("getting seed to soil map")
 seed_to_soil_map = alm.getDestinationMaps('seeds', alm.seeds)
-print("getting soil to fertilizer map")
 soil_to_fertilizer_map = alm.getDestinationMaps('soil', unpack(seed_to_soil_map))
-print("getting fertilizer to water map")
 fertilizer_to_water_map = alm.getDestinationMaps('fertilizer', unpack(soil_to_fertilizer_map))
-print("getting water to light map")
 water_to_light_map = alm.getDestinationMaps('water', unpack(fertilizer_to_water_map))
-print("getting light to temp map")
 light_to_temp_map = alm.getDestinationMaps('light', unpack(water_to_light_map))
-print("getting temp to humidity map")
 temp_to_humidity_map = alm.getDestinationMaps('temp', unpack(light_to_temp_map))
-print("getting humidity to location map")
 humidity_to_location_map = alm.getDestinationMaps('humidity', unpack(temp_to_humidity_map))
 
 locations = print(min(  [v for _,v in enumerate(humidity_to_location_map)] ))
+# 71710860 for my input it too low:w
