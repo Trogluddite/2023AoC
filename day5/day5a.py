@@ -33,17 +33,16 @@ class Alamanc:
         inst = 0
         for mapInstance in destProp:
             rangeLen = mapInstance['rangeLen']
-            print(f'getting mapInstance {inst} of {rangeLen}')
-            sourceRange = list(range(mapInstance['sourceStart'], mapInstance['sourceStart'] + rangeLen))
-            destRange = list(range(mapInstance['destStart'], mapInstance['destStart'] + rangeLen))
+            #sourceRange = list(range(mapInstance['sourceStart'], mapInstance['sourceStart'] + rangeLen))
+            #destRange = list(range(mapInstance['destStart'], mapInstance['destStart'] + rangeLen))
 
             for v in sourceVals:
-                if v in sourceRange:
-                    valIdx = sourceRange.index(v)
+                if v >= mapInstance['sourceStart'] and v <= mapInstance['sourceStart'] + rangeLen:
+                    valIdx = v - mapInstance['sourceStart']
                 else:
                     valIdx = None
                 if valIdx is not None:
-                    sourceMappings[v] = destRange[valIdx]
+                    sourceMappings[v] = mapInstance['destStart'] + valIdx
             inst += 1
                     
         return sourceMappings
