@@ -30,8 +30,10 @@ class Alamanc:
         for v in sourceVals:
             sourceMappings[v] = v
 
+        inst = 0
         for mapInstance in destProp:
             rangeLen = mapInstance['rangeLen']
+            print(f'getting mapInstance {inst} of {rangeLen}')
             sourceRange = list(range(mapInstance['sourceStart'], mapInstance['sourceStart'] + rangeLen))
             destRange = list(range(mapInstance['destStart'], mapInstance['destStart'] + rangeLen))
 
@@ -40,13 +42,11 @@ class Alamanc:
                     valIdx = sourceRange.index(v)
                 else:
                     valIdx = None
-
-                if valIdx:
+                if valIdx is not None:
                     sourceMappings[v] = destRange[valIdx]
+            inst += 1
                     
         return sourceMappings
-
-        
 
 # build a 2d array of functions, each returns the character in the x,y position
 def buildAlmanac():
@@ -86,23 +86,19 @@ alm = buildAlmanac()
 def unpack(map):
     return [map[k] for k in map.keys()]
 
+print("getting seed to soil map")
 seed_to_soil_map = alm.getDestinationMaps('seeds', alm.seeds)
-print(seed_to_soil_map)
+print("getting soil to fertilizer map")
 soil_to_fertilizer_map = alm.getDestinationMaps('soil', unpack(seed_to_soil_map))
-print(soil_to_fertilizer_map)
-
+print("getting fertilizer to water map")
 fertilizer_to_water_map = alm.getDestinationMaps('fertilizer', unpack(soil_to_fertilizer_map))
-print(fertilizer_to_water_map)
+print("getting water to light map")
+water_to_light_map = alm.getDestinationMaps('water', unpack(fertilizer_to_water_map))
+print("getting light to temp map")
+light_to_temp_map = alm.getDestinationMaps('light', unpack(water_to_light_map))
+print("getting temp to humidity map")
+temp_to_humidity_map = alm.getDestinationMaps('temp', unpack(light_to_temp_map))
+print("getting humidity to location map")
+humidity_to_location_map = alm.getDestinationMaps('humidity', unpack(temp_to_humidity_map))
 
-water_to_light_map = alm.getDestinationMaps('water', unpack(soil_to_fertilizer_map))
-print(water_to_light_map)
-
-#light_to_temp_map = alm.getDestinationMaps('light', unpack(water_to_light_map))
-#print(light_to_temp_map)
-
-#temp_to_humidity_map = alm.getDestinationMaps('temp', unpack(light_to_temp_map))
-#print(temp_to_humidity_map)
-
-#humidity_to_location_map = alm.getDestinationMaps('humidity', unpack(temp_to_humidity_map))
-#print(humidity_to_location_map)
-
+locations = print(min(  [v for _,v in enumerate(humidity_to_location_map)] ))
