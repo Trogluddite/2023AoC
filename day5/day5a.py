@@ -1,10 +1,20 @@
 #!/usr/bin/env python3
 
+from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Dict, List
 
 @dataclass
 class Alamanc:
+    propertyMappings = {
+            'seeds' : 'seed_to_soil',
+            'soil' : 'soil_to_fertilizer',
+            'fertilizer' : 'fertilizer_to_water',
+            'water' : 'water_to_light',
+            'light' : 'light_to_temp',
+            'temp' : 'temp_to_humidity',
+            'humidity' : 'humidity_to_location',
+            }
     seeds: List[int] = field(default_factory=list)
     seed_to_soil: List[Dict[str, int]] = field(default_factory=list)
     soil_to_fertilizer: List[Dict[str, int]] = field(default_factory=list)
@@ -14,8 +24,32 @@ class Alamanc:
     temp_to_humidity: List[Dict[str, int]] = field(default_factory=list)
     humidity_to_location: List[Dict[str, int]] = field(default_factory=list)
 
+    def getDestinationMaps(self, sourceProp, sourceVals):
+        destProp = self.__getattribute__(self.propertyMappings[sourceProp])
+        sourceMappings = defaultdict(int)
+        for v in sourceVals:
+            sourceMappings[v] = v
+
+        for mapInstance in destProp:
+            rangeLen = mapInstance['rangeLen']
+            sourceRange = list(range(mapInstance['sourceStart'], mapInstance['sourceStart'] + rangeLen))
+            destRange = list(range(mapInstance['destStart'], mapInstance['destStart'] + rangeLen))
+
+            for v in sourceVals:
+                if v in sourceRange:
+                    valIdx = sourceRange.index(v)
+                else:
+                    valIdx = None
+
+                if valIdx:
+                    sourceMappings[v] = destRange[valIdx]
+                    
+        return sourceMappings
+
+        
+
 # build a 2d array of functions, each returns the character in the x,y position
-def getAlmanac():
+def buildAlmanac():
     alm = Alamanc()
     mapType = ''
     for idx, row in enumerate(open('input.txt').readlines()):
@@ -47,5 +81,28 @@ def getAlmanac():
                 alm.humidity_to_location.append( {'destStart': int(destStart), 'sourceStart' : int(sourceStart), 'rangeLen' :int(rangeLen)} )
     return alm
 
-alm = getAlmanac()
-print(alm)
+alm = buildAlmanac()
+
+def unpack(map):
+    return [map[k] for k in map.keys()]
+
+seed_to_soil_map = alm.getDestinationMaps('seeds', alm.seeds)
+print(seed_to_soil_map)
+soil_to_fertilizer_map = alm.getDestinationMaps('soil', unpack(seed_to_soil_map))
+print(soil_to_fertilizer_map)
+
+fertilizer_to_water_map = alm.getDestinationMaps('fertilizer', unpack(soil_to_fertilizer_map))
+print(fertilizer_to_water_map)
+
+water_to_light_map = alm.getDestinationMaps('water', unpack(soil_to_fertilizer_map))
+print(water_to_light_map)
+
+#light_to_temp_map = alm.getDestinationMaps('light', unpack(water_to_light_map))
+#print(light_to_temp_map)
+
+#temp_to_humidity_map = alm.getDestinationMaps('temp', unpack(light_to_temp_map))
+#print(temp_to_humidity_map)
+
+#humidity_to_location_map = alm.getDestinationMaps('humidity', unpack(temp_to_humidity_map))
+#print(humidity_to_location_map)
+
