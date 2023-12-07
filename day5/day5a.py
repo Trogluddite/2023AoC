@@ -93,5 +93,4 @@ light_to_temp_map = alm.getDestinationMaps('light', unpack(water_to_light_map))
 temp_to_humidity_map = alm.getDestinationMaps('temp', unpack(light_to_temp_map))
 humidity_to_location_map = alm.getDestinationMaps('humidity', unpack(temp_to_humidity_map))
 
-locations = print(min(  [v for _,v in enumerate(humidity_to_location_map)] ))
-# 71710860 for my input it too low:w
+locations = print( min(  [v[1] for v in humidity_to_location_map.items()]) )
