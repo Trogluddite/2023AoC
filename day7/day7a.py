@@ -63,5 +63,10 @@ def bucketHand(handInst):
 for h in hands:
     bucketHand(h)
 
+
+cardRanks = dict(zip( list('AKQJT98765432'), range(1,14)))
+
 for k,v in handBuckets.items():
-    print(f'handType: {k}, hands of type: {v}')
+    # sort buckets by first card in hand, ranked by cardRank
+    handBuckets[k] = sorted(handBuckets[k], key=(lambda h: cardRanks[ h[0][0] ]) )
+print(handBuckets)
