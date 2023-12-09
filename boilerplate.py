@@ -2,7 +2,7 @@
 
 import sys
 
-if len(sys.argv()) > 1:
+if len(sys.argv) > 1:
     filename = sys.argv[1]
 else:
     filename = "input.txt"
@@ -15,4 +15,3 @@ with open(filename) as file:
         if len(l.strip()) == 0:
             continue
         inLines.append(l)
-
