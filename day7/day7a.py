@@ -60,14 +60,26 @@ def bucketHand(handInst):
         return
     handBuckets['highCard'].append(handInst)
 
+# build lists of each hand type;
+# E.G., all 'five of a kind' hands go in the same bucket
 for h in hands:
     bucketHand(h)
-cardRanks = dict(zip( list('23456789TJQKA'), range(1,14)))
+
+# sort each bucket; sort key is assigned to each hand such that:
+# 1. each card gets assigned a value equal to place value, times cardValue
+# 2. cards are summed
+# 3. use this as the hand's sorting key (see Lambda)
+# rank-power is chosen such that no number of sums from the lower rank can equal
+# the value of a the smallest card in the higher rank ... ^100 is a guess
+cardValue = dict(zip( list('23456789TJQKA'), range(1,14)))
+handLen = 5
+rankPower = 100
 for k,v in handBuckets.items():
-    # sort buckets by first card in hand, ranked by cardRank
-    # higher card gets higher rank #
-    # FIXME: bug here; if first card matches, it should sort based on second card
-    handBuckets[k] =  sorted(handBuckets[k], key=(lambda h: cardRanks[ h[0][0] ]))
+    handBuckets[k] = sorted(handBuckets[k],
+                            key=lambda h:
+                                sum([(i+1) * ((rankPower**(handLen-i)) * cardValue[v]) for i,v in enumerate(h[0])])
+                            )
+
 
 # generator to rank all hands, where higher rank is later in list
 # and thus corresponds to a higher enumerated value
@@ -78,13 +90,17 @@ def rankedHands():
         for x in iter( handBuckets[k] ):
             yield x
 
+for b in handBuckets.keys():
+    print(f'handType: {b}, instances: {handBuckets[b]}')
+# finally, get all of the hand values, and return their sums
 handVals = list()
-for k, h in enumerate(rankedHands()):
-    print(f'rank: {(k+1)}, hand: {h}')
 for r, h in enumerate(rankedHands()):
     # r+1 is hand ranking
     # h[1] is hand bid
+    print(r+1, h, (r+1) * h[1])
     handVals.append( (r+1) * (h[1]) )
 
-print(handVals)
 print(sum(handVals))
+
+# produces correct part A answer:
+# 253933213
