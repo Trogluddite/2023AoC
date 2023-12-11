@@ -2,6 +2,7 @@
 
 import sys
 from itertools import cycle
+from math import lcm  #py 3.9+
 
 if len(sys.argv) > 1:
     filename = sys.argv[1]
@@ -26,10 +27,27 @@ with open(filename) as file:
         mappings[k]['L'] = mLft
         mappings[k]['R'] = mRgt
 
-def walkAndCount():
-    stepCount = 0
+def getStartNodes():
+    starts = list()
+    for k in mappings.keys():
+        if k[-1] == "A" :
+            starts.append(k)
+    return starts
+
+def getCycleLength(startStr):
+    cycleCount = 0
     dirIter = cycle(directions)
+    nextStep = startStr
+    while  nextStep[-1] != 'Z':
+        nextStep = mappings[nextStep][next(dirIter)]
+        cycleCount += 1
+    return cycleCount
 
-print(walkAndCount())
+starts = getStartNodes()
+cycleCounts = list()
+for s in starts:
+    cycleCounts.append(getCycleLength(s))
 
+print(lcm(*cycleCounts))
 
+#produces correct count for my input: 9606140307013
