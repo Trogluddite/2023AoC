@@ -16,19 +16,34 @@ with open(filename) as file:
             continue
         inLines.append(l)
 
-def extrapolate(lineVals):
+def reduceVals(lineVals):
     lines = [lineVals]
     foundZeros = False
     while not foundZeros:
+        newLine = list()
         currLine = lines[-1]
-        nextLine = list()
-        for idx, val in enumerate(currLine):
-            if idx < len(lineVals)-1:
-                nextLine.append(abs(val - lineVals[idx+1]))
-        lines.append(nextLine)
-        if all(x==0 for x in nextLine):
+        pairs = [(x-1, x) for x in range(1,len(currLine))]
+        for p in pairs:
+            newLine.append( abs(currLine[p[1]] - currLine[p[0]]) )
+        lines.append(newLine)
+        if all(x==0 for x in newLine):
             foundZeros = True
     return(lines)
 
-intVals = [int(x) for x in inLines[0].split() ]
-print(extrapolate( intVals ))
+def appendEnds(lines):
+    for lineNum in reversed(range(1, len(lines))):
+        if lineNum == len(lines) - 1:
+            lines[lineNum].append(0)
+        lines[lineNum - 1].append(lines[lineNum-1][-1] + lines[lineNum][-1])
+    return lines
+
+extrapolatedVals = list()
+for il in inLines:
+    intVals = [int(x) for x in il.split() ]
+    reducedIl = reduceVals(intVals)
+    appended = appendEnds(reducedIl)
+    print(appended)
+    extrapolatedVals.append( appended[0][-1] )
+
+
+print(extrapolatedVals)
