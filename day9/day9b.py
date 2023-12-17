@@ -30,18 +30,19 @@ def reduceVals(lineVals):
             foundZeros = True
     return(lines)
 
-def prependStarts(lines):
+def appendEnds(lines):
     for lineNum in reversed(range(1, len(lines))):
         if lineNum == len(lines) - 1:
-            lines[lineNum].insert(0, 0)
-        lines[lineNum - 1].insert(0, lines[lineNum-1][0] - lines[lineNum][0])
+            lines[lineNum].append(0)
+        lines[lineNum - 1].append(lines[lineNum-1][-1] + lines[lineNum][-1])
     return lines
 
 extrapolatedVals = list()
 for il in inLines:
     intVals = [int(x) for x in il.split() ]
     reducedIl = reduceVals(intVals)
-    prepended = prependStarts(reducedIl)
-    extrapolatedVals.append( prepended[0][0] )
+    appended = appendEnds(reducedIl)
+    extrapolatedVals.append( appended[0][-1] )
+
 
 print(sum(extrapolatedVals))
