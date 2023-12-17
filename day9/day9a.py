@@ -24,7 +24,7 @@ def reduceVals(lineVals):
         currLine = lines[-1]
         pairs = [(x-1, x) for x in range(1,len(currLine))]
         for p in pairs:
-            newLine.append( abs(currLine[p[1]] - currLine[p[0]]) )
+            newLine.append( currLine[p[1]] - currLine[p[0]] )
         lines.append(newLine)
         if all(x==0 for x in newLine):
             foundZeros = True
@@ -42,8 +42,7 @@ for il in inLines:
     intVals = [int(x) for x in il.split() ]
     reducedIl = reduceVals(intVals)
     appended = appendEnds(reducedIl)
-    print(appended)
     extrapolatedVals.append( appended[0][-1] )
 
 
-print(extrapolatedVals)
+print(sum(extrapolatedVals))
