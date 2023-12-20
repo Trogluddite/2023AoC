@@ -18,7 +18,7 @@ with open(filename) as file:
         l = l.strip()
         l = '..' + l + '..'
         inLines.append(l)
-    lineLen = len(inLines[0]) + 4
+    lineLen = len(inLines[0])
     inLines.append('.' *  lineLen)
     inLines.append('.' *  lineLen)
     inLines.insert(0, '.' * lineLen)
@@ -45,7 +45,7 @@ def findStart(lines):
             return (x,y)
 
 class MazeNode:
-    def __init__(self, typeChar, nodeX=None, nodeY=None):
+    def __init__(self, typeChar, nodeX=None, nodeY=None, parent=None):
         self.X = int(nodeX) if nodeX else None
         self.Y = int(nodeY) if nodeY else None
         self.left = None
@@ -53,40 +53,64 @@ class MazeNode:
         self.up = None
         self.down = None
         self.typeChar  = typeChar
+        self.parent = parent
 
 def buildLeaves(node, grid):
-    if node.typeChar == '.' or node.typeChar == 'S':
-        return
+    if node.typeChar == '.':
+        return node
+    # we've made a full cylce
+    if not node.parent and node.typeChar == 'S':
+        return node
 
     x = node.X
     y = node.Y
-    mL = grid[x-1][ 0 ]
-    mR = grid[x+1][ 0 ]
-    mU = grid[ 0 ][y+1]
-    mD = grid[ 0 ][y-1]
+    mL = grid[ y ][x-1]
+    mR = grid[ y ][x+1]
+    mU = grid[y-1][ x ]
+    mD = grid[y+1][ x ]
 
     if mL == '-':
         mL = '_'
     if mD == '|':
         mD = '/'
 
-    lX, lY = dirs[mL]
-    node.left = MazeNode(grid[lX][lY], lX, lY)
-    rX, rY = dirs[mR]
-    node.right = MazeNode(grid[rX][rY], rX, rY)
-    uX, uY = dirs[mU]
-    node.up = MazeNode(grid[uX][uY], uX, uY)
-    dX, dY = dirs[mD]
-    node.down = MazeNode(grid[dX][dY], dX, dY)
+    mx, my = dirs[mL]
+    lX = x + mx
+    lY = y + my
+    node.left = MazeNode(grid[lX][lY], lX, lY, node)
+    mx, my = dirs[mR]
+    rX = x + mx
+    rY = y + my
+    node.right = MazeNode(grid[rX][rY], rX, rY, node)
+    mx, my = dirs[mU]
+    uX = x + mx
+    uY = y + my 
+    node.up = MazeNode(grid[uX][uY], uX, uY, node)
+    mx, my = dirs[mD]
+    dX = x + mx
+    dY = y + my
+    node.down = MazeNode(grid[dX][dY], dX, dY, node)
 
     # cycle detection?
-    buildLeaves(node.left, grid)
-    buildLeaves(node.right, grid)
-    buildLeaves(node.up, grid)
-    buildLeaves(node.down, grid)
+    node.left = buildLeaves(node.left, grid)
+    node.right = buildLeaves(node.right, grid)
+    node.up = buildLeaves(node.up, grid)
+    node.down = buildLeaves(node.down, grid)
+    return node
+
+def getExits(node):
+    exitNodes = list()
+    if node.left and node.left.typeChar not in ['S', '.']:
+        exitNodes.append(node.left)
+    if node.right and node.right.typeChar not in ['S', '.']:
+        exitNodes.append(node.right)
+    if node.up and node.up.typeChar not in ['S', '.']:
+        exitNodes.append(node.up)
+    if node.down and node.down.typeChar not in ['S', '.']:
+        exitNodes.append(node.down)
+    return exitNodes
 
 startPos = findStart(inLines)
-mazeRoot = MazeNode('S', startPos[0], startPos[1])
-
-buildLeaves(mazeRoot, inLines)
-
+mazeRoot = MazeNode('S', startPos[0], startPos[1], None)
+print( getExits(mazeRoot) )
+print(mazeRoot.left.typeChar)
