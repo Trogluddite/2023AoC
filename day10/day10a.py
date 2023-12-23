@@ -117,6 +117,28 @@ def buildLeaves(node, grid):
         node.down = buildLeaves(node.down, grid)
     return node
 
+def printChildren(node, depth=0):
+    prependSpaces = ' ' * depth
+    print(f'LEFT  {depth}: {prependSpaces} {node.left}')
+    print(f'RIGHT {depth}: {prependSpaces} {node.right}')
+    print(f'UP    {depth}: {prependSpaces} {node.up}')
+    print(f'DOWN  {depth}: {prependSpaces} {node.down}')
+
+    nextDepth = depth + 1
+    if node.left:
+        print('left children')
+        printChildren(node.left, nextDepth)
+    if node.right:
+        print('right children')
+        printChildren(node.right, nextDepth)
+    if node.up:
+        print('up children')
+        printChildren(node.up, nextDepth)
+    if node.down:
+        print('down children')
+        printChildren(node.down, nextDepth)
+
 startPos = findStart(inLines)
 mazeRoot = MazeNode('S', startPos[0], startPos[1], None)
 mazeRoot = buildLeaves(mazeRoot, inLines)
+printChildren(mazeRoot)
