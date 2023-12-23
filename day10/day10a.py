@@ -59,7 +59,7 @@ def buildLeaves(node, grid):
     if node.typeChar == '.':
         return node
     # we've made a full cylce
-    if not node.parent and node.typeChar == 'S':
+    if node.parent and node.typeChar == 'S':
         return node
 
     x = node.X
@@ -74,43 +74,49 @@ def buildLeaves(node, grid):
     if mD == '|':
         mD = '/'
 
-    mx, my = dirs[mL]
-    lX = x + mx
-    lY = y + my
-    node.left = MazeNode(grid[lX][lY], lX, lY, node)
-    mx, my = dirs[mR]
-    rX = x + mx
-    rY = y + my
-    node.right = MazeNode(grid[rX][rY], rX, rY, node)
-    mx, my = dirs[mU]
-    uX = x + mx
-    uY = y + my 
-    node.up = MazeNode(grid[uX][uY], uX, uY, node)
-    mx, my = dirs[mD]
-    dX = x + mx
-    dY = y + my
-    node.down = MazeNode(grid[dX][dY], dX, dY, node)
+    if mL != 'S':
+        if mL == '.':
+            node.left = None
+        else:
+            mx, my = dirs[mL]
+            lX = x + mx
+            lY = y + my
+            node.left = MazeNode(grid[lX][lY], lX, lY, node)
+    if mR != 'S':
+        if mR == '.':
+            node.right = None
+        else:
+            mx, my = dirs[mR]
+            rX = x + mx
+            rY = y + my
+            node.right = MazeNode(grid[rX][rY], rX, rY, node)
+    if mU != 'S':
+        if mU == '.':
+            node.up = None
+        else:
+            mx, my = dirs[mU]
+            uX = x + mx
+            uY = y + my
+            node.up = MazeNode(grid[uX][uY], uX, uY, node)
+    if mD != 'S':
+        if mD == '.':
+            node.down = None
+        else:
+            mx, my = dirs[mD]
+            dX = x + mx
+            dY = y + my
+            node.down = MazeNode(grid[dX][dY], dX, dY, node)
 
-    # cycle detection?
-    node.left = buildLeaves(node.left, grid)
-    node.right = buildLeaves(node.right, grid)
-    node.up = buildLeaves(node.up, grid)
-    node.down = buildLeaves(node.down, grid)
+    if node.left:
+        node.left = buildLeaves(node.left, grid)
+    if node.right:
+        node.right = buildLeaves(node.right, grid)
+    if node.up:
+        node.up = buildLeaves(node.up, grid)
+    if node.down:
+        node.down = buildLeaves(node.down, grid)
     return node
-
-def getExits(node):
-    exitNodes = list()
-    if node.left and node.left.typeChar not in ['S', '.']:
-        exitNodes.append(node.left)
-    if node.right and node.right.typeChar not in ['S', '.']:
-        exitNodes.append(node.right)
-    if node.up and node.up.typeChar not in ['S', '.']:
-        exitNodes.append(node.up)
-    if node.down and node.down.typeChar not in ['S', '.']:
-        exitNodes.append(node.down)
-    return exitNodes
 
 startPos = findStart(inLines)
 mazeRoot = MazeNode('S', startPos[0], startPos[1], None)
-print( getExits(mazeRoot) )
-print(mazeRoot.left.typeChar)
+mazeRoot = buildLeaves(mazeRoot, inLines)
