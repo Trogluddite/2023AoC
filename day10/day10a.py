@@ -119,26 +119,25 @@ def buildLeaves(node, grid):
 
 def printChildren(node, depth=0):
     prependSpaces = ' ' * depth
-    print(f'LEFT  {depth}: {prependSpaces} {node.left}')
-    print(f'RIGHT {depth}: {prependSpaces} {node.right}')
-    print(f'UP    {depth}: {prependSpaces} {node.up}')
-    print(f'DOWN  {depth}: {prependSpaces} {node.down}')
 
     nextDepth = depth + 1
     if node.left:
-        print('left children')
+        print(f'LEFT  {depth}: {prependSpaces} {node.left.X, node.left.Y, node.left.typeChar}')
         printChildren(node.left, nextDepth)
     if node.right:
-        print('right children')
+        print(f'RIGHT {depth}: {prependSpaces} {node.right.X, node.right.Y, node.right.typeChar}')
         printChildren(node.right, nextDepth)
     if node.up:
-        print('up children')
+        print(f'UP    {depth}: {prependSpaces} {node.up.X, node.up.Y, node.up.typeChar}')
         printChildren(node.up, nextDepth)
     if node.down:
-        print('down children')
+        print(f'DOWN  {depth}: {prependSpaces} {node.down.X, node.down.Y, node.down.typeChar}')
         printChildren(node.down, nextDepth)
 
 startPos = findStart(inLines)
 mazeRoot = MazeNode('S', startPos[0], startPos[1], None)
 mazeRoot = buildLeaves(mazeRoot, inLines)
 printChildren(mazeRoot)
+
+for l in inLines:
+    print(l)
