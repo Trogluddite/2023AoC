@@ -27,14 +27,14 @@ with open(filename) as file:
 # - will becomee _ on left side
 # | will becoome / on bottom side
 dirs = {
-        '-' : (1,0),    # right
-        '_' : (-1,0),   # left
-        '|' : (0, 1),   # up
-        '/' : (0,-1),   # down
-        'L' : (1,1),    # down-right
-        'J' : (-1,1),   # down-left
-        '7' : (-1,-1),  # up-left
-        'F' : (-1,1),   # up-right
+        '-' : (0,1),    # right
+        '_' : (0,-1),   # left
+        '|' : (-1, 0),  # up
+        '/' : (1, 0),   # down
+        'L' : (0,1),    # down-right
+        'J' : (0,-1),   # down-left
+        '7' : (0,-1),  # up-left
+        'F' : (0,1),   # up-right
         '.' : (0,0),    # no movement
     }
 
@@ -139,5 +139,3 @@ mazeRoot = MazeNode('S', startPos[0], startPos[1], None)
 mazeRoot = buildLeaves(mazeRoot, inLines)
 printChildren(mazeRoot)
 
-for l in inLines:
-    print(l)
