@@ -33,7 +33,7 @@ dirs = {
         '/' : (1, 0),   # down
         'L' : (0,1),    # down-right
         'J' : (0,-1),   # down-left
-        '7' : (0,-1),  # up-left
+        '7' : (-1,0),  # up-left
         'F' : (0,1),   # up-right
         '.' : (0,0),    # no movement
     }
@@ -68,11 +68,12 @@ def buildLeaves(node, grid):
 
     x = node.X
     y = node.Y
-    mL = grid[ y ][x-1]
-    mR = grid[ y ][x+1]
-    mU = grid[y-1][ x ]
-    mD = grid[y+1][ x ]
+    mL = grid[ x ][y-1]
+    mR = grid[ x ][y+1]
+    mU = grid[x-1][ y ]
+    mD = grid[x+1][ y ]
 
+    print(f'L: {mL}, R: {mR}, U: {mU}, D: {mD}')
     if mL == '-':
         mL = '_'
     if mD == '|':
@@ -93,6 +94,7 @@ def buildLeaves(node, grid):
             node.right = None
         else:
             mx, my = dirs[mR]
+            print(mx, my)
             rX = x + mx
             rY = y + my
             node.right = MazeNode(grid[rX][rY], rX, rY, node)
