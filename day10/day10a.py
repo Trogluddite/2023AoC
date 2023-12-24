@@ -61,6 +61,10 @@ def buildLeaves(node, grid):
     # we've made a full cylce
     if node.parent and node.typeChar == 'S':
         return node
+    if node.parent:
+        print(f'parent coords {node.parent.X, node.parent.Y}')
+    else:
+        print('must be the root!')
 
     x = node.X
     y = node.Y
@@ -75,6 +79,7 @@ def buildLeaves(node, grid):
         mD = '/'
 
     if mL != 'S':
+        print(f'move L char: {mL}')
         if mL == '.':
             node.left = None
         else:
@@ -83,6 +88,7 @@ def buildLeaves(node, grid):
             lY = y + my
             node.left = MazeNode(grid[lX][lY], lX, lY, node)
     if mR != 'S':
+        print(f'move R char: {mR}')
         if mR == '.':
             node.right = None
         else:
@@ -91,6 +97,7 @@ def buildLeaves(node, grid):
             rY = y + my
             node.right = MazeNode(grid[rX][rY], rX, rY, node)
     if mU != 'S':
+        print(f'move U char: {mU}')
         if mU == '.':
             node.up = None
         else:
@@ -99,6 +106,7 @@ def buildLeaves(node, grid):
             uY = y + my
             node.up = MazeNode(grid[uX][uY], uX, uY, node)
     if mD != 'S':
+        print(f'move D char: {mD}')
         if mD == '.':
             node.down = None
         else:
@@ -108,12 +116,16 @@ def buildLeaves(node, grid):
             node.down = MazeNode(grid[dX][dY], dX, dY, node)
 
     if node.left:
+        print(f"get left children, from {node.left.X, node.left.Y}")
         node.left = buildLeaves(node.left, grid)
     if node.right:
+        print(f'build right children, from {node.right.X, node.right.Y}')
         node.right = buildLeaves(node.right, grid)
     if node.up:
+        print(f'build up children, from {node.up.X, node.up.Y}')
         node.up = buildLeaves(node.up, grid)
     if node.down:
+        print(f"build down children, from {node.down.X, node.down.Y}")
         node.down = buildLeaves(node.down, grid)
     return node
 
@@ -138,4 +150,5 @@ startPos = findStart(inLines)
 mazeRoot = MazeNode('S', startPos[0], startPos[1], None)
 mazeRoot = buildLeaves(mazeRoot, inLines)
 printChildren(mazeRoot)
-
+for x in inLines:
+    print(x)
